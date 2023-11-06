@@ -1,0 +1,72 @@
+{"properties": [
+  {
+    "name": "mqtt.broker.url",
+    "type": "java.lang.String",
+    "description": "A description for 'mqtt.broker.url'"
+  },
+  {
+    "name": "mqtt.client.id",
+    "type": "java.lang.String",
+    "description": "A description for 'mqtt.client.id'"
+  },
+  {
+    "name": "mqtt.username",
+    "type": "java.lang.String",
+    "description": "A description for 'mqtt.username'"
+  },
+  {
+    "name": "mqtt.defaultTopic",
+    "type": "java.lang.String",
+    "description": "A description for 'mqtt.defaultTopic'"
+  },
+  {
+    "name": "mqtt.password",
+    "type": "java.lang.String",
+    "description": "A description for 'mqtt.password'"
+  },
+  {
+    "name": "mqtt.topic.operation.management",
+    "type": "java.lang.String",
+    "description": "A description for 'mqtt.topic.operation.management'"
+  },
+  {
+    "name": "mqtt.topic.operation.ack",
+    "type": "java.lang.String",
+    "description": "A description for 'mqtt.topic.operation.ack'"
+  },
+  {
+    "name": "mqtt.topic.operation.completion",
+    "type": "java.lang.String",
+    "description": "A description for 'mqtt.topic.operation.completion'"
+  },
+  {
+    "name": "mqtt.topic.operation.rejection",
+    "type": "java.lang.String",
+    "description": "A description for 'mqtt.topic.operation.rejection'"
+  },
+  {
+    "name": "mqtt.topics_base.operation.management",
+    "type": "java.lang.String",
+    "description": "A description for 'mqtt.topics_base.operation.management'"
+  },
+  {
+    "name": "mqtt.topics_base.operation.ack",
+    "type": "java.lang.String",
+    "description": "A description for 'mqtt.topics_base.operation.ack'"
+  },
+  {
+    "name": "mqtt.topics_base.operation.completion",
+    "type": "java.lang.String",
+    "description": "A description for 'mqtt.topics_base.operation.completion'"
+  },
+  {
+    "name": "mqtt.topics_base.operation.rejection",
+    "type": "java.lang.String",
+    "description": "A description for 'mqtt.topics_base.operation.rejection'"
+  },
+  {
+    "name": "mqtt.topics_base.operation.publish",
+    "type": "java.lang.String",
+    "description": "A description for 'mqtt.topics_base.operation.publish'"
+  }
+]}
