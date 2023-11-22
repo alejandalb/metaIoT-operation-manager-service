@@ -7,24 +7,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AckListenerService {
+public class CompletionListenerService {
 
 	@Autowired
 	private MqttService mqttService;
 
-	public AckListenerService() {
-		// Subscribe to the "ack" topic when this service is instantiated
+	public CompletionListenerService() {
+		// Subscribe to the "completion" topic when this service is instantiated
 		subscribe();
 	}
 
 	private void subscribe() {
 		try {
-			mqttService.subscribeToAckTopic(new IMqttMessageListener() {
+			mqttService.subscribeToCompletionTopic(new IMqttMessageListener() {
 				@Override
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
-					// Handle the incoming message from the "ack" topic
+					// Handle the incoming message from the "completion" topic
 					String payload = new String(message.getPayload());
-					System.out.println("Received message on 'ack' topic: " + payload);
+					System.out.println("Received message on 'completion' topic: " + payload);
 				}
 			});
 		} catch (MqttException e) {

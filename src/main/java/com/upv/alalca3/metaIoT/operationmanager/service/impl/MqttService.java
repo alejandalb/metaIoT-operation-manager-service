@@ -43,7 +43,7 @@ public class MqttService implements IMqttService {
 		mqttClient.subscribe(topic, 0, listener);
 	}
 
-	public void publishMessage(String topic, String message) throws MqttException {
+	private void publishMessage(String topic, String message) throws MqttException {
 		mqttClient.connect();
 		mqttClient.publish(topic, message.getBytes(), 0, false);
 		mqttClient.disconnect();
