@@ -1,4 +1,4 @@
-package com.upv.alalca3.metaIoT.operationmanager.properties;
+package com.upv.alalca3.metaIoT.operationmanager.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

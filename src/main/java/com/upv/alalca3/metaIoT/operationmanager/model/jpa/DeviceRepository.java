@@ -5,10 +5,10 @@ package com.upv.alalca3.metaIoT.operationmanager.model.jpa;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.upv.alalca3.metaIoT.operationmanager.model.Operation;
+import com.upv.alalca3.metaIoT.operationmanager.model.Device;
 
 /**
  * 
  */
-public interface OperationRepository extends CrudRepository<Operation, Long> {
+public interface DeviceRepository extends CrudRepository<Device, Long> {
 }
