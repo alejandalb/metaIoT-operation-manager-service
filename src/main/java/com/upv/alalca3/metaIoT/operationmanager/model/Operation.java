@@ -16,80 +16,78 @@ import jakarta.persistence.OneToMany;
  */
 @Entity
 public class Operation {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long operation_id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private String operation_type;
-    private String operation_parameters;
-    private String operation_status;
+	private String type;
+	private String parameters;
+	private String status;
 
-    @OneToMany(mappedBy = "operation")
-    private Set<Message> messages;
-    
-    
+	@OneToMany(mappedBy = "operation")
+	private Set<Message> messages;
 
 	/**
-	 * @return the operation_id
+	 * @return the id
 	 */
-	public Long getOperation_id() {
-		return operation_id;
+	public Long getId() {
+		return this.id;
 	}
 
 	/**
-	 * @param operation_id the operation_id to set
+	 * @param id the id to set
 	 */
-	public void setOperation_id(Long operation_id) {
-		this.operation_id = operation_id;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	/**
-	 * @return the operation_type
+	 * @return the type
 	 */
-	public String getOperation_type() {
-		return operation_type;
+	public String getType() {
+		return this.type;
 	}
 
 	/**
-	 * @param operation_type the operation_type to set
+	 * @param type the type to set
 	 */
-	public void setOperation_type(String operation_type) {
-		this.operation_type = operation_type;
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	/**
-	 * @return the operation_parameters
+	 * @return the parameters
 	 */
-	public String getOperation_parameters() {
-		return operation_parameters;
+	public String getParameters() {
+		return this.parameters;
 	}
 
 	/**
-	 * @param operation_parameters the operation_parameters to set
+	 * @param parameters the parameters to set
 	 */
-	public void setOperation_parameters(String operation_parameters) {
-		this.operation_parameters = operation_parameters;
+	public void setParameters(String parameters) {
+		this.parameters = parameters;
 	}
 
 	/**
-	 * @return the operation_status
+	 * @return the status
 	 */
-	public String getOperation_status() {
-		return operation_status;
+	public String getStatus() {
+		return this.status;
 	}
 
 	/**
-	 * @param operation_status the operation_status to set
+	 * @param status the status to set
 	 */
-	public void setOperation_status(String operation_status) {
-		this.operation_status = operation_status;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	/**
 	 * @return the messages
 	 */
 	public Set<Message> getMessages() {
-		return messages;
+		return this.messages;
 	}
 
 	/**
@@ -98,6 +96,5 @@ public class Operation {
 	public void setMessages(Set<Message> messages) {
 		this.messages = messages;
 	}
-    
-    
+
 }

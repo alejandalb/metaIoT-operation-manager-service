@@ -3,6 +3,7 @@
  */
 package com.upv.alalca3.metaIoT.operationmanager.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,80 +17,89 @@ import jakarta.persistence.ManyToOne;
  */
 @Entity
 public class Message {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long message_id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "operation_id")
-    private Operation operation;
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "operation_id")
+	private Operation operation;
 
-    @ManyToOne
-    @JoinColumn(name = "device_id")
-    private Device device;
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "device_id")
+	private Device device;
 
-    private String message_content;
-    private String message_type;
+	private String content;
+	private String type;
+
 	/**
-	 * @return the message_id
+	 * @return the id
 	 */
-	public Long getMessage_id() {
-		return message_id;
+	public Long getId() {
+		return this.id;
 	}
+
 	/**
-	 * @param message_id the message_id to set
+	 * @param id the id to set
 	 */
-	public void setMessage_id(Long message_id) {
-		this.message_id = message_id;
+	public void setId(Long id) {
+		this.id = id;
 	}
+
 	/**
 	 * @return the operation
 	 */
 	public Operation getOperation() {
-		return operation;
+		return this.operation;
 	}
+
 	/**
 	 * @param operation the operation to set
 	 */
 	public void setOperation(Operation operation) {
 		this.operation = operation;
 	}
+
 	/**
 	 * @return the device
 	 */
 	public Device getDevice() {
-		return device;
+		return this.device;
 	}
+
 	/**
 	 * @param device the device to set
 	 */
 	public void setDevice(Device device) {
 		this.device = device;
 	}
+
 	/**
-	 * @return the message_content
+	 * @return the content
 	 */
-	public String getMessage_content() {
-		return message_content;
+	public String getContent() {
+		return this.content;
 	}
+
 	/**
-	 * @param message_content the message_content to set
+	 * @param content the content to set
 	 */
-	public void setMessage_content(String message_content) {
-		this.message_content = message_content;
+	public void setContent(String content) {
+		this.content = content;
 	}
+
 	/**
-	 * @return the message_type
+	 * @return the type
 	 */
-	public String getMessage_type() {
-		return message_type;
+	public String getType() {
+		return this.type;
 	}
+
 	/**
-	 * @param message_type the message_type to set
+	 * @param type the type to set
 	 */
-	public void setMessage_type(String message_type) {
-		this.message_type = message_type;
+	public void setType(String type) {
+		this.type = type;
 	}
-    
-    
+
 }

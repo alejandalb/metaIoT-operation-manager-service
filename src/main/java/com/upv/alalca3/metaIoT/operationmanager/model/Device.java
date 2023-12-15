@@ -17,50 +17,48 @@ import jakarta.persistence.OneToMany;
  */
 @Entity
 public class Device {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long device_id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private String device_name;
+	private String name;
 
-    // Add other device-specific fields here
-
-    @OneToMany(mappedBy = "device")
-    private Set<Message> messages;
+	@OneToMany(mappedBy = "device")
+	private Set<Message> messages;
 
 	/**
-	 * @return the device_id
+	 * @return the id
 	 */
-	public Long getDevice_id() {
-		return device_id;
+	public Long getId() {
+		return this.id;
 	}
 
 	/**
-	 * @param device_id the device_id to set
+	 * @param id the id to set
 	 */
-	public void setDevice_id(Long device_id) {
-		this.device_id = device_id;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	/**
-	 * @return the device_name
+	 * @return the name
 	 */
-	public String getDevice_name() {
-		return device_name;
+	public String getName() {
+		return this.name;
 	}
 
 	/**
-	 * @param device_name the device_name to set
+	 * @param name the name to set
 	 */
-	public void setDevice_name(String device_name) {
-		this.device_name = device_name;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
 	 * @return the messages
 	 */
 	public Set<Message> getMessages() {
-		return messages;
+		return this.messages;
 	}
 
 	/**
@@ -69,6 +67,5 @@ public class Device {
 	public void setMessages(Set<Message> messages) {
 		this.messages = messages;
 	}
-    
-    
+
 }
