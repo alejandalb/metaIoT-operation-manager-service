@@ -25,7 +25,7 @@ public class Message {
 	@JoinColumn(name = "operation_id")
 	private Operation operation;
 
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "device_id")
 	private Device device;
 
@@ -36,7 +36,7 @@ public class Message {
 	 * @return the id
 	 */
 	public Long getId() {
-		return this.id;
+		return id;
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class Message {
 	 * @return the operation
 	 */
 	public Operation getOperation() {
-		return this.operation;
+		return operation;
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class Message {
 	 * @return the device
 	 */
 	public Device getDevice() {
-		return this.device;
+		return device;
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class Message {
 	 * @return the content
 	 */
 	public String getContent() {
-		return this.content;
+		return content;
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class Message {
 	 * @return the type
 	 */
 	public String getType() {
-		return this.type;
+		return type;
 	}
 
 	/**

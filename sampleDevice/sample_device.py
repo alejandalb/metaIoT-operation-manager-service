@@ -20,7 +20,7 @@ MQTT_TOPIC_REJECTED=environ.get("MQTT_TOPIC_REJECTED")
 print (MQTT_TOPIC_PUBLISHED_OPS)
 
 device = {
-     "id": 15,
+     "id": 2,
      "name": "SamplePython"
 }
 message = {
