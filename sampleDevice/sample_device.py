@@ -20,7 +20,7 @@ MQTT_TOPIC_REJECTED=environ.get("MQTT_TOPIC_REJECTED")
 print (MQTT_TOPIC_PUBLISHED_OPS)
 
 device = {
-     "id": 2,
+     #"id": 2,
      "name": "SamplePython"
 }
 message = {
@@ -35,6 +35,10 @@ def on_publish(client, userdata, mid):
     print('Data published')
 
 def on_message(client, userdata, msg):
+        message = {
+             "content": "Mensaje de prueba metaIoT",
+             "device": device
+             }
         print(f"Message received: {msg.payload.decode()} in topic {msg.topic}")
         operation = json.loads(msg.payload.decode())
         message['operation'] = operation
@@ -44,10 +48,12 @@ def on_message(client, userdata, msg):
         number = random.randint(1, 2)
         if number == 1:
             message['content'] = message['content'] + ' COMPLETADO'
+            client.publish(MQTT_TOPIC_COMPLETED + '/' + id_field, json.dumps(message))
         else:
             message['content'] = message['content'] + ' RECHAZADO'
+            client.publish(MQTT_TOPIC_COMPLETED + '/' + id_field, json.dumps(message))
 
-        client.publish(MQTT_TOPIC_COMPLETED + '/' + id_field, json.dumps(message))
+        
 
 
 
