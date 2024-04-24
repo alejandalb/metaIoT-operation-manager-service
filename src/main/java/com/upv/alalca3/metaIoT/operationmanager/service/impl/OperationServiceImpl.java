@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.upv.alalca3.metaIoT.operationmanager.model.Operation;
-import com.upv.alalca3.metaIoT.operationmanager.model.jpa.OperationRepository;
-import com.upv.alalca3.metaIoT.operationmanager.service.IMqttService;
+import com.upv.alalca3.metaIoT.operationmanager.repositories.jpa.OperationRepository;
+import com.upv.alalca3.metaIoT.operationmanager.service.MqttService;
 
 /**
  * @author amna
@@ -19,7 +19,7 @@ import com.upv.alalca3.metaIoT.operationmanager.service.IMqttService;
 @Service
 public class OperationServiceImpl {
 	@Autowired
-	private IMqttService mqttService;
+	private MqttService mqttService;
 	@Autowired
 	private OperationRepository repo;
 

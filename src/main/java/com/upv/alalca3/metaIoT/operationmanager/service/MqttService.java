@@ -8,7 +8,7 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 /**
  * 
  */
-public interface IMqttService {
+public interface MqttService {
 
 	void publishOperation(String additionalPath, String message);
 

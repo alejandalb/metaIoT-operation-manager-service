@@ -4,7 +4,7 @@
 package com.upv.alalca3.metaIoT.operationmanager.mqtt.properties;
 
 /**
- * @author gmv Mqtt topic properties
+ * @author alejandalb Mqtt topic properties
  */
 public class TopicProperties {
 

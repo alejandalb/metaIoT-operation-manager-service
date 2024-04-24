@@ -21,7 +21,7 @@ public class Message {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "operation_id")
 	private Operation operation;
 

@@ -14,14 +14,14 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.upv.alalca3.metaIoT.operationmanager.model.Message;
-import com.upv.alalca3.metaIoT.operationmanager.model.jpa.MessageRepository;
 import com.upv.alalca3.metaIoT.operationmanager.mqtt.MqttGateway;
 import com.upv.alalca3.metaIoT.operationmanager.mqtt.properties.MqttProperties;
-import com.upv.alalca3.metaIoT.operationmanager.service.IMqttService;
+import com.upv.alalca3.metaIoT.operationmanager.repositories.jpa.MessageRepository;
+import com.upv.alalca3.metaIoT.operationmanager.service.MqttService;
 
 @Service
-public class MqttService implements IMqttService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(MqttService.class);
+public class MqttServiceImpl implements MqttService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(MqttServiceImpl.class);
 
 	private final MqttProperties mqttProperties;
 
@@ -31,7 +31,7 @@ public class MqttService implements IMqttService {
 	private MessageRepository messageRepository;
 
 	@Autowired
-	public MqttService(MqttProperties mqttProperties, MqttGateway mqttGateway) {
+	public MqttServiceImpl(MqttProperties mqttProperties, MqttGateway mqttGateway) {
 		super();
 		this.mqttProperties = mqttProperties;
 		this.mqttGateway = mqttGateway;
@@ -50,9 +50,9 @@ public class MqttService implements IMqttService {
 				if (reconnect) {
 					LOGGER.info("Reconnected to broker");
 					// Because Clean Session is set to true, we need to re-subscribe
-					MqttService.this.subscribeToAckTopic(this);
-					MqttService.this.subscribeToCompletionTopic(this);
-					MqttService.this.subscribeToRejectionTopic(this);
+					MqttServiceImpl.this.subscribeToAckTopic(this);
+					MqttServiceImpl.this.subscribeToCompletionTopic(this);
+					MqttServiceImpl.this.subscribeToRejectionTopic(this);
 				} else {
 					LOGGER.info("Connected to broker");
 				}
@@ -65,7 +65,7 @@ public class MqttService implements IMqttService {
 
 			@Override
 			public void messageArrived(String topic, MqttMessage message) throws Exception {
-				MqttService.this.handleMessage(topic, message);
+				MqttServiceImpl.this.handleMessage(topic, message);
 			}
 
 			@Override

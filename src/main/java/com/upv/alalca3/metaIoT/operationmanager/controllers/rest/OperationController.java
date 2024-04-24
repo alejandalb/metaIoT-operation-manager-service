@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.upv.alalca3.metaIoT.operationmanager.model.Operation;
-import com.upv.alalca3.metaIoT.operationmanager.service.IMqttService;
+import com.upv.alalca3.metaIoT.operationmanager.service.MqttService;
 import com.upv.alalca3.metaIoT.operationmanager.service.impl.OperationServiceImpl;
 
 /**
@@ -20,7 +20,7 @@ import com.upv.alalca3.metaIoT.operationmanager.service.impl.OperationServiceImp
 @RestController
 public class OperationController {
 	@Autowired
-	private IMqttService mqttService;
+	private MqttService mqttService;
 	@Autowired
 	private OperationServiceImpl opService;
 

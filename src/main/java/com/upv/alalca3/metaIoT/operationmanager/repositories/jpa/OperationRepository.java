@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.upv.alalca3.metaIoT.operationmanager.model.jpa;
+package com.upv.alalca3.metaIoT.operationmanager.repositories.jpa;
 
 import org.springframework.data.repository.CrudRepository;
 

@@ -3,98 +3,56 @@
  */
 package com.upv.alalca3.metaIoT.operationmanager.model;
 
-import java.util.Set;
+import java.time.Instant;
+import java.util.List;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.upv.alalca3.metaIoT.operationmanager.utils.types.OperationStatus;
+import com.upv.alalca3.metaIoT.operationmanager.utils.types.OperationType;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.OneToMany;
 
 /**
- * 
+ * Base class for all operations
  */
 @Entity
-public class Operation {
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
+@EntityListeners(AuditingEntityListener.class)
+public abstract class Operation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@Enumerated(EnumType.STRING)
+	private OperationType type;
+	@Enumerated(EnumType.ORDINAL)
+	private OperationStatus status;
+	@Embedded
+	OperationSchedulingData schedulingData;
 
-	private String type;
-	private String parameters;
-	private String status;
+	@OneToMany(mappedBy = "operation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<Message> messages;
 
-	@OneToMany(mappedBy = "operation")
-	private Set<Message> messages;
-
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return this.id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return the type
-	 */
-	public String getType() {
-		return this.type;
-	}
-
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	/**
-	 * @return the parameters
-	 */
-	public String getParameters() {
-		return this.parameters;
-	}
-
-	/**
-	 * @param parameters the parameters to set
-	 */
-	public void setParameters(String parameters) {
-		this.parameters = parameters;
-	}
-
-	/**
-	 * @return the status
-	 */
-	public String getStatus() {
-		return this.status;
-	}
-
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	/**
-	 * @return the messages
-	 */
-	public Set<Message> getMessages() {
-		return this.messages;
-	}
-
-	/**
-	 * @param messages the messages to set
-	 */
-	public void setMessages(Set<Message> messages) {
-		this.messages = messages;
-	}
-
+	// Auditing attributes
+	@CreatedDate
+	private Instant creationDate;
+	@LastModifiedDate
+	private Instant modificationDate;
 }
