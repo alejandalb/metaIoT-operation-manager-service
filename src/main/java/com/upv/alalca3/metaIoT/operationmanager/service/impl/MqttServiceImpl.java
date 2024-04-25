@@ -1,160 +1,153 @@
 package com.upv.alalca3.metaIoT.operationmanager.service.impl;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiConsumer;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.upv.alalca3.metaIoT.operationmanager.config.properties.MqttProperties;
 import com.upv.alalca3.metaIoT.operationmanager.model.Message;
+import com.upv.alalca3.metaIoT.operationmanager.model.dto.OperationDTO;
 import com.upv.alalca3.metaIoT.operationmanager.mqtt.MqttGateway;
-import com.upv.alalca3.metaIoT.operationmanager.mqtt.properties.MqttProperties;
 import com.upv.alalca3.metaIoT.operationmanager.repositories.jpa.MessageRepository;
 import com.upv.alalca3.metaIoT.operationmanager.service.MqttService;
+import com.upv.alalca3.metaIoT.operationmanager.utils.MqttTopicUtils;
+
+import jakarta.annotation.PostConstruct;
 
 @Service
 public class MqttServiceImpl implements MqttService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(MqttServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MqttServiceImpl.class);
+    private final Map<String, BiConsumer<String, MqttMessage>> handlers;
+    private final ObjectMapper mapper;
 
-	private final MqttProperties mqttProperties;
+    private final MqttGateway mqttGateway;
+    private final MqttProperties mqttProperties;
 
-	private final MqttGateway mqttGateway;
+    @Autowired
+    private MessageRepository messageRepository;
 
-	@Autowired
-	private MessageRepository messageRepository;
+    @Autowired
+    public MqttServiceImpl(MqttGateway mqttGateway, MqttProperties mqttProperties) {
+	super();
+	this.mqttProperties = mqttProperties;
+	this.mqttGateway = mqttGateway;
+	this.handlers = new HashMap<>();
+	this.mapper = new ObjectMapper();
+    }
 
-	@Autowired
-	public MqttServiceImpl(MqttProperties mqttProperties, MqttGateway mqttGateway) {
-		super();
-		this.mqttProperties = mqttProperties;
-		this.mqttGateway = mqttGateway;
+    @PostConstruct
+    protected void init() {
+	this.initHandlers();
+	this.configureMapper();
+	this.initListener();
+    }
+
+    private void initHandlers() {
+	this.handlers.put(this.mqttProperties.getTopics().getAck(), this::handleAckMessage);
+	this.handlers.put(this.mqttProperties.getTopics().getCompletion(), this::handleRejectedMessage);
+	this.handlers.put(this.mqttProperties.getTopics().getRejection(), this::handleCompletedMessage);
+    }
+
+    private void configureMapper() {
+	this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
+    private void initListener() {
+	MqttCallbackExtended callback = new OperationMessagesMqttCallback();
+	Set<String> topicFilters = this.handlers.keySet();
+	this.mqttGateway.subscribe(topicFilters.toArray(new String[0]), callback);
+    }
+
+    @Override
+    public <E extends OperationDTO> void publishOperation(E operation) {
+	String topic = MqttTopicUtils.buildOperationPublishTopic(operation);
+	try {
+	    this.mqttGateway.publish(topic, this.mapper.writeValueAsString(operation));
+	} catch (JsonProcessingException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+    }
+
+    private void handleAckMessage(String topic, MqttMessage message) {
+	// TODO document why this method is empty
+    }
+
+    private void handleRejectedMessage(String topic, MqttMessage message) {
+	// TODO document why this method is empty
+    }
+
+    private void handleCompletedMessage(String topic, MqttMessage message) {
+	// TODO document why this method is empty
+    }
+
+    private void storeMessage(String type, MqttMessage message) {
+	ObjectMapper mapper = new ObjectMapper();
+	Message m = null;
+	try {
+	    m = mapper.readValue(new String(message.getPayload(), StandardCharsets.UTF_8), Message.class);
+	    // m.setType(type);
+
+	} catch (JsonProcessingException e) {
+	    e.printStackTrace();
 	}
 
-	/**
-	 * Subscribes to the specified MQTT topics.
-	 *
-	 * @param topics the topics to subscribe to
-	 */
+	if (m != null) {
+	    this.messageRepository.save(m);
+	}
+    }
+
+    public class OperationMessagesMqttCallback implements MqttCallbackExtended {
 	@Override
-	public void subscribe() {
-		MqttCallbackExtended callback = new MqttCallbackExtended() {
-			@Override
-			public void connectComplete(boolean reconnect, String serverURI) {
-				if (reconnect) {
-					LOGGER.info("Reconnected to broker");
-					// Because Clean Session is set to true, we need to re-subscribe
-					MqttServiceImpl.this.subscribeToAckTopic(this);
-					MqttServiceImpl.this.subscribeToCompletionTopic(this);
-					MqttServiceImpl.this.subscribeToRejectionTopic(this);
-				} else {
-					LOGGER.info("Connected to broker");
-				}
-			}
-
-			@Override
-			public void connectionLost(Throwable cause) {
-				LOGGER.error("Connection lost", cause);
-			}
-
-			@Override
-			public void messageArrived(String topic, MqttMessage message) throws Exception {
-				MqttServiceImpl.this.handleMessage(topic, message);
-			}
-
-			@Override
-			public void deliveryComplete(IMqttDeliveryToken token) {
-				LOGGER.info("Delivery complete");
-			}
-		};
-
-		this.subscribeToAckTopic(callback);
-		this.subscribeToCompletionTopic(callback);
-		this.subscribeToRejectionTopic(callback);
+	public void connectComplete(boolean reconnect, String serverURI) {
+	    if (reconnect) {
+		LOGGER.info("Reconnected to broker");
+	    } else {
+		LOGGER.info("Connected to broker");
+	    }
 	}
 
 	@Override
-	public void publishOperation(String additionalPath, String message) {
-		String topic = this.buildPublishTopic(additionalPath);
-		this.publishMessage(topic, message);
+	public void connectionLost(Throwable cause) {
+	    LOGGER.error("Connection lost", cause);
 	}
 
 	@Override
-	public void subscribeToAckTopic(MqttCallback callback) {
-		String topic = this.buildAckTopic("#"); // Subscribe to all subtopics under "ack"
-		this.subscribeToTopic(topic, callback);
-		LOGGER.info("Suscribed to:" + topic);
+	public void messageArrived(String topic, MqttMessage message) throws Exception {
+	    LOGGER.info("Message arrived in Topic: {} [{}]", topic, message);
+	    try {
+		this.handleMessage(topic, message);
+	    } catch (RuntimeException e) {
+		LOGGER.error("Exception ocurred in topic: {} => {} ", topic, e.getMessage());
+	    }
 	}
 
 	@Override
-	public void subscribeToCompletionTopic(MqttCallback callback) {
-		String topic = this.buildCompletionTopic("#"); // Subscribe to all subtopics under "completion"
-		this.subscribeToTopic(topic, callback);
-		LOGGER.info("Suscribed to:" + topic);
-	}
-
-	@Override
-	public void subscribeToRejectionTopic(MqttCallback callback) {
-		String topic = this.buildRejectionTopic("#"); // Subscribe to all subtopics under "rejection"
-		this.subscribeToTopic(topic, callback);
-		LOGGER.info("Suscribed to:" + topic);
-	}
-
-	private void subscribeToTopic(String topic, MqttCallback callback) {
-		this.mqttGateway.subscribe(topic, callback);
-	}
-
-	private void publishMessage(String topic, String message) {
-		this.mqttGateway.publish(topic, message);
-	}
-
-	private String buildPublishTopic(String additionalPath) {
-		return this.mqttProperties.getTopics().getPublish() + additionalPath;
-	}
-
-	private String buildAckTopic(String additionalPath) {
-		return this.mqttProperties.getTopics().getAck() + additionalPath;
-	}
-
-	private String buildCompletionTopic(String additionalPath) {
-		return this.mqttProperties.getTopics().getCompletion() + additionalPath;
-	}
-
-	private String buildRejectionTopic(String additionalPath) {
-		return this.mqttProperties.getTopics().getRejection() + additionalPath;
+	public void deliveryComplete(IMqttDeliveryToken token) {
+	    LOGGER.info("Delivery complete");
 	}
 
 	private void handleMessage(String topic, MqttMessage message) {
-		if (topic.startsWith(this.mqttProperties.getTopics().getAck())) {
-			this.storeMessage("ACK", message);
-		} else if (topic.startsWith(this.mqttProperties.getTopics().getCompletion())) {
-			this.storeMessage("COMPLETED", message);
-		} else if (topic.startsWith(this.mqttProperties.getTopics().getRejection())) {
-			this.storeMessage("REJECTED", message);
-
+	    MqttServiceImpl.this.handlers.forEach((key, value) -> {
+		if (MqttTopic.isMatched(key, topic)) {
+		    value.accept(topic, message);
 		}
+	    });
 	}
-
-	private void storeMessage(String type, MqttMessage message) {
-		ObjectMapper mapper = new ObjectMapper();
-		Message m = null;
-		try {
-			m = mapper.readValue(new String(message.getPayload(), StandardCharsets.UTF_8), Message.class);
-			m.setType(type);
-
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-
-		if (m != null) {
-			this.messageRepository.save(m);
-		}
-	}
+    }
 
 }

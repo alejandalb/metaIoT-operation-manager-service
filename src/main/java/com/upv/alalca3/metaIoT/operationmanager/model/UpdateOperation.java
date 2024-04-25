@@ -3,9 +3,11 @@
  */
 package com.upv.alalca3.metaIoT.operationmanager.model;
 
-import jakarta.persistence.CascadeType;
+import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +19,8 @@ import lombok.NoArgsConstructor;
 @PrimaryKeyJoinColumn(name = "id")
 @Data
 @NoArgsConstructor
-public class ScriptOperation extends Operation {
-    @OneToOne(mappedBy = "operation", optional = false, orphanRemoval = true, cascade = CascadeType.ALL)
-    private Script script;
+public class UpdateOperation extends Operation {
+    @ElementCollection
+    @Column(columnDefinition = "json")
+    private List<PackageInfo> packages;
 }

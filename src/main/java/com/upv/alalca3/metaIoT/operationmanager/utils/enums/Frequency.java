@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.upv.alalca3.metaIoT.operationmanager.utils.types;
+package com.upv.alalca3.metaIoT.operationmanager.utils.enums;
 
 /**
  * The available frequencies of operations publishing

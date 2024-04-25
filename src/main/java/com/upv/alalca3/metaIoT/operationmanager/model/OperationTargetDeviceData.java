@@ -13,14 +13,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @author amna
- *
+ * Class to represent the data of a {@link Operation}'s target devices
  */
 @Embeddable
 @Data
 @NoArgsConstructor
-public class Device {
-    private String name;
+public class OperationTargetDeviceData {
     @Column(name = "device_group")
     private String group;
     @Enumerated(EnumType.STRING)

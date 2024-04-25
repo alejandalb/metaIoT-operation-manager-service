@@ -1,21 +1,19 @@
 /**
  * 
  */
-package com.upv.alalca3.metaIoT.operationmanager.model;
+package com.upv.alalca3.metaIoT.operationmanager.model.dto;
 
 import com.upv.alalca3.metaIoT.operationmanager.utils.enums.DeviceType;
 
-import jakarta.persistence.Embeddable;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Embeddable class that contains the {@link Script} metadata
+ * 
  */
-@Embeddable
 @Data
 @NoArgsConstructor
-public class ScriptMetadata {
+public class ScriptMetadataDTO {
     // The name of the script
     private String name;
     // The version of the script
@@ -32,5 +30,4 @@ public class ScriptMetadata {
     private String maxFirmwareVersion;
     // The programming language of the script
     private String language;
-
 }

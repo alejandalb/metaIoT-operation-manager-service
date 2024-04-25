@@ -1,11 +1,13 @@
 /**
  * 
  */
-package com.upv.alalca3.metaIoT.operationmanager.utils.factories;
+package com.upv.alalca3.metaIoT.operationmanager.factories;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
-import com.upv.alalca3.metaIoT.operationmanager.utils.types.Frequency;
+import com.upv.alalca3.metaIoT.operationmanager.utils.enums.Frequency;
 
 /**
  * Class used for converting between Dates and Cron expressions
@@ -17,14 +19,17 @@ public final class CronExpressionFactory {
 	}
 
 	/**
-	 * Returns CRON expression from the provided {@link LocalDateTime} instance
+	 * Returns CRON expression that corresponds the provided {@link Instant} in a
+	 * specific {@link Frequency}
 	 * 
-	 * @param dateTime  the {@link LocalDateTime} date used for getting the values
+	 * @param instant   the {@link Instant} timestamp used for getting the values
 	 *                  for the cronExpression
 	 * @param frequency the scheduling frequency
 	 * @return the CRON expression
 	 */
-	public static String fromLocalDateTime(LocalDateTime dateTime, Frequency frequency) {
+	public static String fromInstantAndFrequency(Instant instant, Frequency frequency) {
+		LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+
 		String seconds = Integer.toString(dateTime.getSecond());
 		String minute = Integer.toString(dateTime.getMinute());
 		String hour = Integer.toString(dateTime.getHour());

@@ -1,23 +1,18 @@
 /**
  * 
  */
-package com.upv.alalca3.metaIoT.operationmanager.model;
+package com.upv.alalca3.metaIoT.operationmanager.model.dto;
 
 import java.time.Instant;
 
 import com.upv.alalca3.metaIoT.operationmanager.utils.enums.Frequency;
 
-import jakarta.persistence.Embeddable;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * 
- */
-@Embeddable
 @Data
 @NoArgsConstructor
-public class OperationSchedulingData {
+public class OperationSchedulingDataDTO {
     private Instant scheduledDate;
     private Frequency frequency;
     private Integer maxIterations;

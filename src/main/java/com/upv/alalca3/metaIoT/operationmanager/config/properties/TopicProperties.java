@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.upv.alalca3.metaIoT.operationmanager.mqtt.properties;
+package com.upv.alalca3.metaIoT.operationmanager.config.properties;
 
 /**
  * @author alejandalb Mqtt topic properties

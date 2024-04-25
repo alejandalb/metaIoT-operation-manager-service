@@ -10,12 +10,10 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.upv.alalca3.metaIoT.operationmanager.utils.types.OperationStatus;
-import com.upv.alalca3.metaIoT.operationmanager.utils.types.OperationType;
+import com.upv.alalca3.metaIoT.operationmanager.utils.enums.OperationStatus;
+import com.upv.alalca3.metaIoT.operationmanager.utils.enums.OperationType;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -28,31 +26,42 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Base class for all operations
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @EntityListeners(AuditingEntityListener.class)
-public abstract class Operation {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	@Enumerated(EnumType.STRING)
-	private OperationType type;
-	@Enumerated(EnumType.ORDINAL)
-	private OperationStatus status;
-	@Embedded
-	OperationSchedulingData schedulingData;
+@Data
+@NoArgsConstructor
+public class Operation {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@OneToMany(mappedBy = "operation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<Message> messages;
+    @Enumerated(EnumType.STRING)
+    private OperationType type;
 
-	// Auditing attributes
-	@CreatedDate
-	private Instant creationDate;
-	@LastModifiedDate
-	private Instant modificationDate;
+    @Enumerated(EnumType.ORDINAL)
+    private OperationStatus status;
+    @Embedded
+    private OperationTargetDeviceData targetDevice;
+    @Embedded
+    private OperationSchedulingData schedulingData;
+
+    @OneToMany(mappedBy = "operation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Message> messages;
+    @OneToOne(mappedBy = "operation", optional = true, orphanRemoval = true, cascade = CascadeType.ALL)
+    private OperationSchedule schedule;
+
+    // Auditing attributes
+    @CreatedDate
+    private Instant creationDate;
+    @LastModifiedDate
+    private Instant modificationDate;
+
 }

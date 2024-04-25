@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.upv.alalca3.metaIoT.operationmanager.utils.types;
+package com.upv.alalca3.metaIoT.operationmanager.utils.enums;
 
 /**
  * {@link Operation} possible values for status
