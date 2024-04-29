@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.upv.alalca3.metaIoT.operationmanager.model.Operation;
+import com.upv.alalca3.metaIoT.operationmanager.model.dto.OperationDTO;
 import com.upv.alalca3.metaIoT.operationmanager.service.MqttService;
-import com.upv.alalca3.metaIoT.operationmanager.service.impl.OperationServiceImpl;
+import com.upv.alalca3.metaIoT.operationmanager.service.OperationService;
 
 /**
  *
@@ -21,11 +21,11 @@ public class OperationController {
     @Autowired
     private MqttService mqttService;
     @Autowired
-    private OperationServiceImpl opService;
+    private OperationService opService;
 
     @PostMapping("/op/publish")
-    public ResponseEntity<Void> publishOperation(@RequestBody Operation operation) {
-	this.opService.save(null);
+    public <D extends OperationDTO> ResponseEntity<Void> publishOperation(@RequestBody D operation) {
+	this.opService.save(operation);
 	return ResponseEntity.ok().build();
     }
 }

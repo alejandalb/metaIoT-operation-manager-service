@@ -6,10 +6,10 @@ package com.upv.alalca3.metaIoT.operationmanager.model.dto;
 import java.time.Instant;
 import java.util.List;
 
-import com.upv.alalca3.metaIoT.operationmanager.model.Message;
-import com.upv.alalca3.metaIoT.operationmanager.model.OperationSchedule;
-import com.upv.alalca3.metaIoT.operationmanager.model.OperationSchedulingData;
-import com.upv.alalca3.metaIoT.operationmanager.model.OperationTargetDeviceData;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.upv.alalca3.metaIoT.operationmanager.utils.enums.OperationStatus;
 import com.upv.alalca3.metaIoT.operationmanager.utils.enums.OperationType;
 
@@ -21,14 +21,17 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-public abstract class OperationDTO {
+@JsonTypeInfo(use = Id.NAME, include = As.PROPERTY, property = "type")
+@JsonSubTypes({ @JsonSubTypes.Type(value = CustomOperationDTO.class, name = "CUSTOM"),
+	@JsonSubTypes.Type(value = ScriptOperationDTO.class, name = "SCRIPT"),
+	@JsonSubTypes.Type(value = UpdateOperationDTO.class, name = "UPDATE") })
+public class OperationDTO {
     private Long id;
     private OperationType type;
     private OperationStatus status;
-    private OperationTargetDeviceData targetDevice;
-    private OperationSchedulingData schedulingData;
-    private List<Message> messages;
-    private OperationSchedule schedule;
+    private OperationTargetDeviceDataDTO targetDevice;
+    private OperationSchedulingDataDTO schedulingData;
+    private List<MessageDTO> messages;
     private Instant creationDate;
     private Instant modificationDate;
 }

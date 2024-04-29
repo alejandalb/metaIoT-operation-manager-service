@@ -3,8 +3,6 @@
  */
 package com.upv.alalca3.metaIoT.operationmanager.model.dto;
 
-import com.upv.alalca3.metaIoT.operationmanager.utils.enums.DeviceType;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,5 +11,5 @@ import lombok.NoArgsConstructor;
 public class DeviceDTO {
     private String name;
     private String group;
-    private DeviceType deviceType;
+    private String deviceType;
 }

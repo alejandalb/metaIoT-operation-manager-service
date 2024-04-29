@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.upv.alalca3.metaIoT.operationmanager.mqtt.impl;
+package com.upv.alalca3.metaIoT.operationmanager.components.impl;
 
 import java.util.Arrays;
 
@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.upv.alalca3.metaIoT.operationmanager.components.MqttGateway;
 import com.upv.alalca3.metaIoT.operationmanager.config.properties.MqttProperties;
 import com.upv.alalca3.metaIoT.operationmanager.factories.MqttClientFactory;
-import com.upv.alalca3.metaIoT.operationmanager.mqtt.MqttGateway;
 
 import jakarta.annotation.PostConstruct;
 

@@ -18,10 +18,10 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.upv.alalca3.metaIoT.operationmanager.components.MqttGateway;
 import com.upv.alalca3.metaIoT.operationmanager.config.properties.MqttProperties;
 import com.upv.alalca3.metaIoT.operationmanager.model.Message;
 import com.upv.alalca3.metaIoT.operationmanager.model.dto.OperationDTO;
-import com.upv.alalca3.metaIoT.operationmanager.mqtt.MqttGateway;
 import com.upv.alalca3.metaIoT.operationmanager.repositories.jpa.MessageRepository;
 import com.upv.alalca3.metaIoT.operationmanager.service.MqttService;
 import com.upv.alalca3.metaIoT.operationmanager.utils.MqttTopicUtils;
@@ -73,8 +73,9 @@ public class MqttServiceImpl implements MqttService {
     }
 
     @Override
-    public <E extends OperationDTO> void publishOperation(E operation) {
-	String topic = MqttTopicUtils.buildOperationPublishTopic(operation);
+    public <D extends OperationDTO> void publishOperation(D operation) {
+	String topic = MqttTopicUtils.buildOperationPublishTopic(this.mqttProperties.getTopics().getPublish(),
+		operation);
 	try {
 	    this.mqttGateway.publish(topic, this.mapper.writeValueAsString(operation));
 	} catch (JsonProcessingException e) {
@@ -116,6 +117,7 @@ public class MqttServiceImpl implements MqttService {
 	public void connectComplete(boolean reconnect, String serverURI) {
 	    if (reconnect) {
 		LOGGER.info("Reconnected to broker");
+		MqttServiceImpl.this.initListener();
 	    } else {
 		LOGGER.info("Connected to broker");
 	    }

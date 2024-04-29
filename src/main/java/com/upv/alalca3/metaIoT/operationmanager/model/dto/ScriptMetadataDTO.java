@@ -3,8 +3,6 @@
  */
 package com.upv.alalca3.metaIoT.operationmanager.model.dto;
 
-import com.upv.alalca3.metaIoT.operationmanager.utils.enums.DeviceType;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -23,7 +21,7 @@ public class ScriptMetadataDTO {
     // The type of the script (e.g., "update", "configuration", "diagnostic")
     private String scriptType;
     // The intended device type for the script (e.g., "sensor", "actuator")
-    private DeviceType deviceType;
+    private String deviceType;
     // The minimum firmware version required to run the script
     private String minFirmwareVersion;
     // The maximum firmware version that can run the script

@@ -15,7 +15,7 @@ import com.upv.alalca3.metaIoT.operationmanager.model.dto.OperationDTO;
 /**
  * 
  */
-public interface OperationMapper<E extends Operation, D extends OperationDTO> {
+public interface BaseOperationMapper<E extends Operation, D extends OperationDTO> {
     D toDto(E entity);
 
     List<D> toDtos(Collection<E> entities);

@@ -27,4 +27,17 @@ public class OperationSchedule {
     private String cronExpression;
     private Integer iterations;
 
+    /**
+     * Constructor with essential fields
+     * 
+     * @param operation      operation that is scheduled
+     * @param cronExpression schedule details expression
+     */
+    public OperationSchedule(Operation operation, String cronExpression) {
+	super();
+	this.operation = operation;
+	this.cronExpression = cronExpression;
+	this.iterations = 0;
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.upv.alalca3.metaIoT.operationmanager.mqtt;
+package com.upv.alalca3.metaIoT.operationmanager.components;
 
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
