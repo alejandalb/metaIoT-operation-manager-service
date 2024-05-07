@@ -4,7 +4,6 @@
 package com.upv.alalca3.metaIoT.operationmanager.model.dto;
 
 import java.time.Instant;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -21,7 +20,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-@JsonTypeInfo(use = Id.NAME, include = As.PROPERTY, property = "type")
+@JsonTypeInfo(use = Id.NAME, include = As.EXISTING_PROPERTY, property = "type", visible = true)
 @JsonSubTypes({ @JsonSubTypes.Type(value = CustomOperationDTO.class, name = "CUSTOM"),
 	@JsonSubTypes.Type(value = ScriptOperationDTO.class, name = "SCRIPT"),
 	@JsonSubTypes.Type(value = UpdateOperationDTO.class, name = "UPDATE") })
@@ -31,7 +30,6 @@ public class OperationDTO {
     private OperationStatus status;
     private OperationTargetDeviceDataDTO targetDevice;
     private OperationSchedulingDataDTO schedulingData;
-    private List<MessageDTO> messages;
     private Instant creationDate;
     private Instant modificationDate;
 }

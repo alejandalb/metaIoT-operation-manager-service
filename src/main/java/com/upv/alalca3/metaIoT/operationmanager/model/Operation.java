@@ -27,6 +27,7 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -40,7 +41,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Operation {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "operation_seq")
+    @SequenceGenerator(name = "operation_seq", sequenceName = "operation_seq", allocationSize = 50)
     private Long id;
 
     @Enumerated(EnumType.STRING)

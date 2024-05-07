@@ -46,7 +46,7 @@ public class OperationServiceImpl implements OperationService {
     public <E extends Operation, D extends OperationDTO> D save(D dto) {
 	E newEntity = this.mapper.toEntity(dto);
 	D savedDTO;
-	if (newEntity.getSchedule() != null) {
+	if (newEntity.getSchedulingData() != null) {
 	    savedDTO = this.mapper.toDto(this.scheduler.scheduleOperation(newEntity));
 
 	} else {

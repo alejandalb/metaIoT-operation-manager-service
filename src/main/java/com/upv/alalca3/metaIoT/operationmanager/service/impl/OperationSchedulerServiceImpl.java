@@ -75,6 +75,7 @@ public class OperationSchedulerServiceImpl implements OperationSchedulerService 
 	OperationSchedule schedule = new OperationSchedule(operation,
 		CronExpressionFactory.fromInstantAndFrequency(scheduledDate, frequency));
 	operation.setSchedule(schedule);
+	schedule.setId(operation.getId());
 	operation = this.repository.save(operation);
 	this.scheduleOperationTask(operation.getSchedule());
 	return operation;

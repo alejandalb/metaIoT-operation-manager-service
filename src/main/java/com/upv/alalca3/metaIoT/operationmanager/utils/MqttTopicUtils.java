@@ -34,7 +34,7 @@ public final class MqttTopicUtils {
 	StringBuilder sb = new StringBuilder();
 	sb.append(base);
 	sb.append(operation.getId());
-	return operation.toString();
+	return sb.toString();
     }
 
 }

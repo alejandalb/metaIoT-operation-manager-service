@@ -15,6 +15,7 @@
 	<name>operation-manager-service</name>
 	<description>Operation manager for metaIoT architecture</description>
 	<properties>
+		<jackson-datatype-jsr310-version>2.9.7</jackson-datatype-jsr310-version>
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>

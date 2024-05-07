@@ -15,9 +15,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.upv.alalca3.metaIoT.operationmanager.components.MqttGateway;
 import com.upv.alalca3.metaIoT.operationmanager.config.properties.MqttProperties;
 import com.upv.alalca3.metaIoT.operationmanager.model.Message;
@@ -64,6 +67,9 @@ public class MqttServiceImpl implements MqttService {
 
     private void configureMapper() {
 	this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	this.mapper.registerModule(new JavaTimeModule());
+	this.mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+	this.mapper.setSerializationInclusion(Include.NON_NULL);
     }
 
     private void initListener() {
