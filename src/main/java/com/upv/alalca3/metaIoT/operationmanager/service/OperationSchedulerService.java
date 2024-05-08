@@ -6,6 +6,6 @@ public interface OperationSchedulerService {
 
     <E extends Operation> E scheduleOperation(E operation);
 
-    <E extends Operation> void cancelMissionSchedule(E operation);
+    <E extends Operation> void cancelOperationSchedule(E operation);
 
 }

@@ -4,6 +4,7 @@
 package com.upv.alalca3.metaIoT.operationmanager.model;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -66,4 +67,10 @@ public class Operation {
     @LastModifiedDate
     private Instant modificationDate;
 
+    public void addMessage(Message message) {
+	if (this.messages == null) {
+	    this.messages = new ArrayList<>();
+	}
+	this.messages.add(message);
+    }
 }

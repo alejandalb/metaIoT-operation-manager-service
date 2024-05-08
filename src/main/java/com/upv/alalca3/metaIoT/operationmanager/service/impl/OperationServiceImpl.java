@@ -3,6 +3,8 @@
  */
 package com.upv.alalca3.metaIoT.operationmanager.service.impl;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,5 +56,10 @@ public class OperationServiceImpl implements OperationService {
 	    this.mqttService.publishOperation(savedDTO);
 	}
 	return savedDTO;
+    }
+
+    @Override
+    public <D extends OperationDTO> Optional<D> get(Long id) {
+	return this.repository.findById(id).map(this.mapper::toDto);
     }
 }

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
@@ -23,31 +25,37 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.upv.alalca3.metaIoT.operationmanager.components.MqttGateway;
 import com.upv.alalca3.metaIoT.operationmanager.config.properties.MqttProperties;
-import com.upv.alalca3.metaIoT.operationmanager.model.Message;
+import com.upv.alalca3.metaIoT.operationmanager.model.dto.MessageDTO;
 import com.upv.alalca3.metaIoT.operationmanager.model.dto.OperationDTO;
-import com.upv.alalca3.metaIoT.operationmanager.repositories.jpa.MessageRepository;
+import com.upv.alalca3.metaIoT.operationmanager.service.MessageService;
 import com.upv.alalca3.metaIoT.operationmanager.service.MqttService;
 import com.upv.alalca3.metaIoT.operationmanager.utils.MqttTopicUtils;
+import com.upv.alalca3.metaIoT.operationmanager.utils.enums.MessageType;
 
 import jakarta.annotation.PostConstruct;
 
 @Service
 public class MqttServiceImpl implements MqttService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MqttServiceImpl.class);
+    private static final String PLUS_WILDCARD = "+";
+    private static final String PLUS_WILDCARD_REGEX = "(\\d+)";
     private final Map<String, BiConsumer<String, MqttMessage>> handlers;
     private final ObjectMapper mapper;
 
     private final MqttGateway mqttGateway;
     private final MqttProperties mqttProperties;
+    private final MessageService messageService;
+
+    private Pattern ackPattern;
+    private Pattern completedPattern;
+    private Pattern rejectedPattern;
 
     @Autowired
-    private MessageRepository messageRepository;
-
-    @Autowired
-    public MqttServiceImpl(MqttGateway mqttGateway, MqttProperties mqttProperties) {
+    public MqttServiceImpl(MqttGateway mqttGateway, MqttProperties mqttProperties, MessageService messageService) {
 	super();
 	this.mqttProperties = mqttProperties;
 	this.mqttGateway = mqttGateway;
+	this.messageService = messageService;
 	this.handlers = new HashMap<>();
 	this.mapper = new ObjectMapper();
     }
@@ -55,14 +63,26 @@ public class MqttServiceImpl implements MqttService {
     @PostConstruct
     protected void init() {
 	this.initHandlers();
+	this.initPatterns();
 	this.configureMapper();
 	this.initListener();
     }
 
     private void initHandlers() {
-	this.handlers.put(this.mqttProperties.getTopics().getAck(), this::handleAckMessage);
-	this.handlers.put(this.mqttProperties.getTopics().getCompletion(), this::handleRejectedMessage);
-	this.handlers.put(this.mqttProperties.getTopics().getRejection(), this::handleCompletedMessage);
+	this.handlers.put(this.mqttProperties.getTopics().getAck() + "#", this::handleAckMessage);
+	this.handlers.put(this.mqttProperties.getTopics().getCompletion() + "#", this::handleRejectedMessage);
+	this.handlers.put(this.mqttProperties.getTopics().getRejection() + "#", this::handleCompletedMessage);
+    }
+
+    private void initPatterns() {
+	String ackTopicRegex = this.mqttProperties.getTopics().getAck().replace(PLUS_WILDCARD, PLUS_WILDCARD_REGEX);
+	this.ackPattern = Pattern.compile(ackTopicRegex);
+	String completedTopicRegex = this.mqttProperties.getTopics().getCompletion().replace(PLUS_WILDCARD,
+		PLUS_WILDCARD_REGEX);
+	this.completedPattern = Pattern.compile(completedTopicRegex);
+	String rejectedopicRegex = this.mqttProperties.getTopics().getRejection().replace(PLUS_WILDCARD,
+		PLUS_WILDCARD_REGEX);
+	this.rejectedPattern = Pattern.compile(rejectedopicRegex);
     }
 
     private void configureMapper() {
@@ -91,30 +111,47 @@ public class MqttServiceImpl implements MqttService {
     }
 
     private void handleAckMessage(String topic, MqttMessage message) {
-	// TODO document why this method is empty
+	Matcher matcher = this.ackPattern.matcher(topic);
+	if (matcher.find()) {
+	    Long operationId = Long.parseLong(matcher.group(1));
+	    this.storeMessage(operationId, MessageType.ACK, message);
+	} else {
+	    LOGGER.error("Regex failed");
+	}
     }
 
     private void handleRejectedMessage(String topic, MqttMessage message) {
-	// TODO document why this method is empty
+	Matcher matcher = this.rejectedPattern.matcher(topic);
+	if (matcher.find()) {
+	    Long operationId = Long.parseLong(matcher.group(1));
+	    this.storeMessage(operationId, MessageType.REJECTION, message);
+	} else {
+	    LOGGER.error("Regex failed");
+	}
     }
 
     private void handleCompletedMessage(String topic, MqttMessage message) {
-	// TODO document why this method is empty
+	Matcher matcher = this.completedPattern.matcher(topic);
+	if (matcher.find()) {
+	    Long operationId = Long.parseLong(matcher.group(1));
+	    this.storeMessage(operationId, MessageType.COMPLETION, message);
+	} else {
+	    LOGGER.error("Regex failed");
+	}
     }
 
-    private void storeMessage(String type, MqttMessage message) {
-	ObjectMapper mapper = new ObjectMapper();
-	Message m = null;
+    private void storeMessage(Long operationId, MessageType type, MqttMessage message) {
+	MessageDTO m = null;
 	try {
-	    m = mapper.readValue(new String(message.getPayload(), StandardCharsets.UTF_8), Message.class);
-	    // m.setType(type);
+	    m = this.mapper.readValue(new String(message.getPayload(), StandardCharsets.UTF_8), MessageDTO.class);
+	    m.setType(type);
 
 	} catch (JsonProcessingException e) {
 	    e.printStackTrace();
 	}
 
-	if (m != null) {
-	    this.messageRepository.save(m);
+	if (m != null && operationId != null) {
+	    this.messageService.save(operationId, m);
 	}
     }
 

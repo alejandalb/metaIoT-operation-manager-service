@@ -10,10 +10,10 @@ spring:
 
 mqtt:
   topics:
-    publish: /op/publish/
-    ack: /op/ack/#
-    completion: /op/completed/#
-    rejection: /op/rejected/#
+    publish: op/publishments/
+    ack:  op/messages/+/ack/
+    completion: op/messages/+/completetion/
+    rejection: op/messages/+/rejection/
   broker:
     url: ws://localhost:9001
   client:

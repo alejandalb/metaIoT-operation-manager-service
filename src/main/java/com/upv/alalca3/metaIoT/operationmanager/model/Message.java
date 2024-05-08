@@ -3,8 +3,16 @@
  */
 package com.upv.alalca3.metaIoT.operationmanager.model;
 
+import java.time.Instant;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.upv.alalca3.metaIoT.operationmanager.utils.enums.MessageType;
+
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,6 +27,7 @@ import lombok.NoArgsConstructor;
  *
  */
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Data
 @NoArgsConstructor
 public class Message {
@@ -32,5 +41,7 @@ public class Message {
     @Embedded
     private Device device;
     private String content;
-    private String type;
+    private MessageType type;
+    @CreatedDate
+    private Instant date;
 }

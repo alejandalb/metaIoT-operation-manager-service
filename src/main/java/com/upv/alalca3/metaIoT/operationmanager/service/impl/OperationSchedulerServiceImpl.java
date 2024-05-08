@@ -85,6 +85,7 @@ public class OperationSchedulerServiceImpl implements OperationSchedulerService 
 	Runnable task = () -> {
 	    LOGGER.info("Launching operation ...");
 	    this.publishOperation(schedule.getOperation());
+	    this.handleIterations(schedule);
 	    LOGGER.info("Operation launched");
 	};
 	CronTrigger cronTrigger = new CronTrigger(schedule.getCronExpression());
@@ -96,7 +97,18 @@ public class OperationSchedulerServiceImpl implements OperationSchedulerService 
 	this.mqttService.publishOperation(this.mapper.toDto(operation));
     }
 
-    private void cancelMission(Long scheduleId) {
+    private void handleIterations(OperationSchedule schedule) {
+	Operation operation = schedule.getOperation();
+	OperationSchedulingData schedulingData = operation.getSchedulingData();
+	if (schedulingData.getMaxIterations() != null) {
+	    schedule.setIterations(schedule.getIterations() + 1);
+	    if (schedule.getIterations().compareTo(schedulingData.getMaxIterations()) >= 0) {
+		this.cancelOperationSchedule(operation);
+	    }
+	}
+    }
+
+    private void cancelScheduledTask(Long scheduleId) {
 	ScheduledFuture<?> scheduledTask = this.scheduledTasks.get(scheduleId);
 	if (scheduledTask != null) {
 	    scheduledTask.cancel(true);
@@ -104,11 +116,17 @@ public class OperationSchedulerServiceImpl implements OperationSchedulerService 
 	}
     }
 
+    private <E extends Operation> void deleteOperationSchedule(E operation) {
+	operation.setSchedule(null);
+	this.repository.save(operation);
+    }
+
     @Override
-    public <E extends Operation> void cancelMissionSchedule(E operation) {
+    public <E extends Operation> void cancelOperationSchedule(E operation) {
 	OperationSchedule schedule = operation.getSchedule();
 	if (schedule != null && schedule.getId() != null) {
-	    this.cancelMission(schedule.getId());
+	    this.cancelScheduledTask(schedule.getId());
+	    this.deleteOperationSchedule(operation);
 	}
     }
 }
