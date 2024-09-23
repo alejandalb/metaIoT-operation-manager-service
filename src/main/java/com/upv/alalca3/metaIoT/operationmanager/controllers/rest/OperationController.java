@@ -42,6 +42,11 @@ public class OperationController {
 	return ResponseEntity.ok(this.operationService.save(operation));
     }
 
+    @PostMapping("/op/{id}/cancel")
+    public ResponseEntity<String> cancelOperation(@PathVariable Long id) {
+	return ResponseEntity.ok("Operation cancelled");
+    }
+
     @GetMapping("/op/{id}")
     public <D extends OperationDTO> ResponseEntity<D> get(@PathVariable Long id) {
 	return ResponseEntity.of(this.operationService.get(id));
