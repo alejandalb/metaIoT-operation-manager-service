@@ -69,9 +69,9 @@ public class MqttServiceImpl implements MqttService {
     }
 
     private void initHandlers() {
-	this.handlers.put(this.mqttProperties.getTopics().getAck() + "#", this::handleAckMessage);
-	this.handlers.put(this.mqttProperties.getTopics().getCompletion() + "#", this::handleRejectedMessage);
-	this.handlers.put(this.mqttProperties.getTopics().getRejection() + "#", this::handleCompletedMessage);
+	this.handlers.put(this.mqttProperties.getTopics().getAck(), this::handleAckMessage);
+	this.handlers.put(this.mqttProperties.getTopics().getRejection(), this::handleRejectedMessage);
+	this.handlers.put(this.mqttProperties.getTopics().getCompletion(), this::handleCompletedMessage);
     }
 
     private void initPatterns() {
