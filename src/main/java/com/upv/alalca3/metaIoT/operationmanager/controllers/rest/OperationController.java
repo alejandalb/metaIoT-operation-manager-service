@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,21 +38,25 @@ public class OperationController {
 	this.messageService = messageService;
     }
 
+    @CrossOrigin(origins = "*")
     @PostMapping("/op/publish")
     public <D extends OperationDTO> ResponseEntity<D> publishOperation(@RequestBody D operation) {
 	return ResponseEntity.ok(this.operationService.save(operation));
     }
 
+    @CrossOrigin(origins = "*")
     @PostMapping("/op/{id}/cancel")
     public ResponseEntity<String> cancelOperation(@PathVariable Long id) {
 	return ResponseEntity.ok("Operation cancelled");
     }
 
+    @CrossOrigin(origins = "*")
     @GetMapping("/op/{id}")
     public <D extends OperationDTO> ResponseEntity<D> get(@PathVariable Long id) {
 	return ResponseEntity.of(this.operationService.get(id));
     }
 
+    @CrossOrigin(origins = "*")
     @GetMapping("/op/{id}/messages")
     public <D extends OperationDTO> ResponseEntity<List<MessageDTO>> getMessages(@PathVariable Long id) {
 	return ResponseEntity.ok(this.messageService.getMessagesByOperationId(id));

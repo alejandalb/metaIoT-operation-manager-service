@@ -34,6 +34,12 @@ public final class MqttTopicUtils {
 	StringBuilder sb = new StringBuilder();
 	sb.append(base);
 	sb.append(operation.getId());
+	sb.append("/");
+	sb.append(operation.getType());
+	sb.append("/");
+	sb.append(operation.getTargetDevice().getDeviceType());
+	sb.append("/");
+	sb.append(operation.getTargetDevice().getGroup());
 	return sb.toString();
     }
 

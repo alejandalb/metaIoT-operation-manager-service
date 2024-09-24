@@ -3,7 +3,7 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:mysql://localhost:3308/metaIoT
+    url: jdbc:mysql://localhost:3306/metaIoT
     username: op_manager
     password: meta
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -11,9 +11,9 @@ spring:
 mqtt:
   topics:
     publish: op/publishments/
-    ack:  op/messages/+/ack/
-    completion: op/messages/+/completetion/
-    rejection: op/messages/+/rejection/
+    ack:  op/messages/+/ack
+    completion: op/messages/+/completetion
+    rejection: op/messages/+/rejection
   broker:
     url: ws://localhost:9001
   client:

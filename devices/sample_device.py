@@ -5,7 +5,7 @@ import paho.mqtt.client as paho
 import json
 import random
 
-load_dotenv(dotenv_path='./.env')
+load_dotenv(dotenv_path='./devices/.env')
 
 BROKER = environ.get("MQTT_HOST")
 PORT = int(environ.get("MQTT_PORT"))
@@ -20,11 +20,12 @@ MQTT_TOPIC_REJECTED=environ.get("MQTT_TOPIC_REJECTED")
 print (MQTT_TOPIC_PUBLISHED_OPS)
 
 device = {
-     #"id": 2,
-     "name": "SamplePython"
+     "name": "SENSOR-SEMÁFORO-EXAMPLE",
+     "group": "SEMAFOROS",
+     "deviceType": "SENSOR"
 }
 message = {
-    "content": "Mensaje de prueba metaIoT",
+    "content": "PROCESO DE ACTUALIZACION",
     "device": device
 }
 
@@ -35,36 +36,27 @@ def on_publish(client, userdata, mid):
     print('Data published')
 
 def on_message(client, userdata, msg):
-        message = {
-             "content": "Mensaje de prueba metaIoT",
-             "device": device
-             }
         print(f"Message received: {msg.payload.decode()} in topic {msg.topic}")
         operation = json.loads(msg.payload.decode())
         message['operation'] = operation
         id_field = str(operation.get('id', ''))
-        client.publish(MQTT_TOPIC_ACK + '/' + id_field, json.dumps(message))
+        client.publish(MQTT_TOPIC_ACK.replace('+', id_field), json.dumps(message))
 
         number = random.randint(1, 2)
         if number == 1:
             message['content'] = message['content'] + ' COMPLETADO'
-            client.publish(MQTT_TOPIC_COMPLETED + '/' + id_field, json.dumps(message))
+            client.publish(MQTT_TOPIC_COMPLETED.replace('+', id_field), json.dumps(message))
         else:
             message['content'] = message['content'] + ' RECHAZADO'
-            client.publish(MQTT_TOPIC_COMPLETED + '/' + id_field, json.dumps(message))
+            client.publish(MQTT_TOPIC_REJECTED.replace('+', id_field), json.dumps(message))
 
-        
-
-
-
-client = paho.Client("sampleClient", transport='websockets')
+client = paho.Client("SENSOR-SEMÁFORO-EXAMPLE", transport='websockets')
 
 client.on_connect = on_connect
 client.on_publish = on_publish
 client.on_message = on_message
 
-client.username_pw_set(USERNAME, PASSWORD)
 
 client.connect(BROKER, PORT, 60)
-client.subscribe(MQTT_TOPIC_PUBLISHED_OPS + '/#')
+client.subscribe(MQTT_TOPIC_PUBLISHED_OPS)
 client.loop_forever()

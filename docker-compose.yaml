@@ -1,0 +1,80 @@
+version: "3.7"
+services:
+  mqtt-broker:
+    image: eclipse-mosquitto
+    container_name: metaIoT-broker
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mqtt/config:/mosquitto/config:rw
+      - ./mqtt/data:/mosquitto/data:rw
+      - ./mqtt/log:/mosquitto/log:rw
+
+  thingsboard:
+    image: thingsboard/tb-postgres
+    container_name: thingsboard
+    environment:
+      TB_QUEUE_TYPE: in-memory
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/thingsboard
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "9090:9090"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:12
+    container_name: postgres
+    environment:
+      POSTGRES_DB: thingsboard
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - tb-postgres-data:/var/lib/postgresql/data
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: metaIoT
+      MYSQL_USER: op_manager
+      MYSQL_PASSWORD: meta
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  spring-boot-app:
+    build: .
+    container_name: spring-boot-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - mqtt-broker
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/metaIoT
+      SPRING_DATASOURCE_USERNAME: op_manager
+      SPRING_DATASOURCE_PASSWORD: meta
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      MQTT_BROKER_URL: ws://mqtt-broker:9001
+      MQTT_CLIENT_ID: op_manager
+      MQTT_USERNAME: user
+      MQTT_PASSWORD: 12345
+      MQTT_QOS: 2
+      MQTT_AUTO_RECONNECT: "true"
+
+volumes:
+  config:
+  data:
+  log:
+  tb-postgres-data:
+  mysql-data:
+
+networks:
+  default:
+    name: metaIoT-network
